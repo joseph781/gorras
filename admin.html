@@ -1,0 +1,1663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - CAPS KINGDOM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-card: #111111;
+            --bg-hover: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent: #ffffff;
+            --border: #222222;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --font-display: 'Oswald', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: var(--font-body); 
+            background: var(--bg-primary); 
+            color: var(--text-primary); 
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* ============================================
+           LOGIN
+           ============================================ */
+        .login-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .login-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 48px;
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+        
+        .login-box h1 {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .login-box p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+        
+        .login-box input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .login-box input:focus {
+            outline: none;
+            border-color: var(--text-primary);
+        }
+        
+        .login-box button {
+            width: 100%;
+            padding: 16px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border: none;
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .login-box button:hover {
+            background: var(--text-secondary);
+        }
+        
+        .login-error {
+            color: var(--danger);
+            margin-top: 16px;
+            display: none;
+            font-size: 14px;
+        }
+        
+        .login-hint {
+            margin-top: 24px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: left;
+        }
+        
+        .login-hint strong {
+            color: var(--text-primary);
+        }
+        
+        /* ============================================
+           ADMIN LAYOUT
+           ============================================ */
+        .admin { display: none; }
+        .admin.active { display: block; }
+        
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        
+        .header h1 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+        
+        .header h1 span {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .header-actions a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .header-actions a:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .header-actions .btn-logout {
+            background: var(--danger);
+            border-color: var(--danger);
+            color: white;
+        }
+        
+        .header-actions .btn-logout:hover {
+            opacity: 0.9;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        
+        /* ============================================
+           TABS
+           ============================================ */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 32px;
+            background: var(--bg-card);
+            padding: 6px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .tab.active {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+        
+        /* ============================================
+           SECTIONS
+           ============================================ */
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        /* ============================================
+           CARDS
+           ============================================ */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card h2 {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* ============================================
+           FORMS
+           ============================================ */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--text-primary);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .form-group small {
+            display: block;
+            margin-top: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+        
+        .form-group small a {
+            color: var(--text-secondary);
+        }
+        
+        .form-group select option {
+            background: var(--bg-card);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        @media (max-width: 600px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+        
+        /* ============================================
+           BUTTONS
+           ============================================ */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+        }
+        
+        .btn-primary:hover {
+            background: var(--text-secondary);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-sm {
+            padding: 10px 16px;
+            font-size: 12px;
+        }
+        
+        /* ============================================
+           TABLE
+           ============================================ */
+        .table-wrap {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--bg-secondary);
+            font-family: var(--font-display);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        
+        td img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            background: var(--bg-secondary);
+        }
+        
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .actions button {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        
+        .actions button:hover {
+            background: var(--bg-hover);
+            border-color: var(--text-primary);
+        }
+        
+        /* ============================================
+           LIST ITEMS
+           ============================================ */
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+        }
+        
+        .list-item-text {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .list-item-text strong {
+            display: block;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .list-item-text small {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        
+        /* ============================================
+           VIDEO ITEMS
+           ============================================ */
+        .video-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+            align-items: flex-start;
+        }
+        
+        .video-item:hover {
+            border-color: var(--text-muted);
+        }
+        
+        .video-thumb {
+            width: 180px;
+            height: 100px;
+            flex-shrink: 0;
+            background: var(--bg-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-thumb .play-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: rgba(255,0,0,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .video-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .video-info h4 {
+            margin: 0 0 8px;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+        
+        .video-info .video-cat {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--bg-hover);
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .video-info .video-cat.live {
+            background: #ff0000;
+            color: white;
+        }
+        
+        .video-info .video-cat.featured {
+            background: var(--warning);
+            color: var(--bg-primary);
+        }
+        
+        .video-info p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        .video-actions {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        
+        /* ============================================
+           STATS
+           ============================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 24px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .stat-value {
+            font-family: var(--font-display);
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .stat-card.highlight {
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+        }
+        
+        .stat-card.highlight h3,
+        .stat-card.highlight .stat-value {
+            color: var(--bg-primary);
+        }
+        
+        /* ============================================
+           TOAST
+           ============================================ */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 16px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            display: none;
+            z-index: 1000;
+        }
+        
+        .toast.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                height: auto;
+                padding: 16px 0;
+                gap: 12px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+            
+            .tabs {
+                flex-direction: column;
+            }
+            
+            .tab {
+                text-align: center;
+            }
+            
+            .video-item {
+                flex-direction: column;
+            }
+            
+            .video-thumb {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16/9;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+    <div class="login-box">
+        <h1>🧢 CAPS KINGDOM</h1>
+        <p>Panel de Administración</p>
+        <input type="password" id="loginPass" placeholder="Contraseña" onkeypress="if(event.key==='Enter')login()">
+        <button onclick="login()">Ingresar</button>
+        <p style="margin-top: 16px; font-size: 13px; color: var(--text-muted);">
+            ¿Olvidaste la contraseña? <a href="#" onclick="showRecovery()" style="color: var(--text-secondary);">Ver instrucciones</a>
+        </p>
+        <div class="login-error" id="loginError">Contraseña incorrecta</div>
+        <div class="login-hint">
+            <strong>📌 Contraseña inicial:</strong> admin123<br>
+            <small>Cámbiala después en Contacto → Seguridad</small>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="admin" id="adminPanel">
+    <header class="header">
+        <div class="header-content">
+            <h1>🧢 CAPS KINGDOM <span>/ Admin</span></h1>
+            <div class="header-actions">
+                <a href="index.html" target="_blank">👁️ Ver Tienda</a>
+                <a href="#" class="btn-logout" onclick="logout()">Salir</a>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- TABS -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('tienda')">🏪 Mi Tienda</button>
+            <button class="tab" onclick="showTab('productos')">🧢 Productos</button>
+            <button class="tab" onclick="showTab('categorias')">📁 Categorías</button>
+            <button class="tab" onclick="showTab('videos')">🎬 Videos</button>
+            <button class="tab" onclick="showTab('reviews')">⭐ Reviews</button>
+            <button class="tab" onclick="showTab('contacto')">📞 Contacto</button>
+            <button class="tab" onclick="showTab('stats')">📊 Stats</button>
+        </div>
+        
+        <!-- ============================================
+             MI TIENDA
+             ============================================ -->
+        <div class="section active" id="sec-tienda">
+            <div class="card">
+                <h2>🏪 Información Básica</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre de la Tienda</label>
+                        <input type="text" id="storeName" placeholder="CAPS KINGDOM">
+                    </div>
+                    <div class="form-group">
+                        <label>Slogan</label>
+                        <input type="text" id="storeSlogan" placeholder="Streetwear Venezolano">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveStore()">💾 Guardar</button>
+            </div>
+            
+            <div class="card">
+                <h2>🎯 Texto de la Portada (Hero)</h2>
+                <div class="form-group">
+                    <label>Título Principal</label>
+                    <input type="text" id="heroTitle" placeholder="CAPS KINGDOM">
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="heroDesc" placeholder="Gorras originales premium para elevar tu estilo urbano..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Badge Superior</label>
+                    <input type="text" id="heroBadge" placeholder="🇻🇪 Streetwear Venezolano">
+                </div>
+                <button class="btn btn-primary" onclick="saveHero()">💾 Guardar</button>
+            </div>
+            
+            <div class="card">
+                <h2>📢 Barra de Anuncios</h2>
+                <div class="form-group">
+                    <label>Texto del Anuncio</label>
+                    <input type="text" id="announcement" placeholder="🔥 Envíos a toda Venezuela • Pago Móvil, Zelle, Binance">
+                </div>
+                <button class="btn btn-primary" onclick="saveAnnouncement()">💾 Guardar</button>
+            </div>
+        </div>
+        
+        <!-- ============================================
+             PRODUCTOS
+             ============================================ -->
+        <div class="section" id="sec-productos">
+            <div class="card">
+                <h2>➕ Agregar Producto</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre *</label>
+                        <input type="text" id="pName" placeholder="NY Yankees Snapback">
+                    </div>
+                    <div class="form-group">
+                        <label>Categoría *</label>
+                        <select id="pCat"></select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Precio USD *</label>
+                        <input type="number" id="pPrice" placeholder="35" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Precio Anterior (opcional)</label>
+                        <input type="number" id="pOldPrice" placeholder="Para mostrar descuento" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Etiqueta</label>
+                        <select id="pBadge">
+                            <option value="">Ninguna</option>
+                            <option value="NEW">🆕 Nuevo</option>
+                            <option value="HOT">🔥 Popular</option>
+                            <option value="SALE">💰 Oferta</option>
+                            <option value="LIMITED">⚡ Limitado</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Imagen Principal *</label>
+                        <input type="text" id="pImage" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>📸 Imágenes Adicionales (diferentes ángulos)</label>
+                    <input type="text" id="pImages" placeholder="URL1, URL2, URL3... (separadas por coma)">
+                    <small>Agrega fotos desde diferentes ángulos. Estas aparecerán en la galería del producto.</small>
+                </div>
+                <div class="form-group">
+                    <label>Descripción</label>
+                    <textarea id="pDesc" placeholder="Describe el producto..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="addProduct()">➕ Agregar Producto</button>
+            </div>
+            
+            <div class="card">
+                <h2>🧢 Mis Productos (<span id="prodCount">0</span>)</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr><th>Imagen</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="prodTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ============================================
+             CATEGORÍAS
+             ============================================ -->
+        <div class="section" id="sec-categorias">
+            <div class="card">
+                <h2>➕ Nueva Categoría</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" id="catName" placeholder="Snapback">
+                    </div>
+                    <div class="form-group">
+                        <label>Icono (emoji)</label>
+                        <input type="text" id="catIcon" placeholder="🧢">
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addCategory()">➕ Agregar</button>
+            </div>
+            
+            <div class="card">
+                <h2>📁 Mis Categorías</h2>
+                <div id="catList"></div>
+            </div>
+        </div>
+        
+        <!-- ============================================
+             VIDEOS
+             ============================================ -->
+        <div class="section" id="sec-videos">
+            <div class="card">
+                <h2>➕ Agregar Video de YouTube</h2>
+                <p style="color:var(--text-muted);margin-bottom:20px;font-size:14px">
+                    Agrega videos de YouTube para mostrar tus productos en acción. Los videos aparecerán en una sección especial de tu tienda.
+                </p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Título del Video *</label>
+                        <input type="text" id="videoTitle" placeholder="Review: Nueva colección 2024">
+                    </div>
+                    <div class="form-group">
+                        <label>URL de YouTube *</label>
+                        <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=XXXXX">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <select id="videoCat">
+                            <option value="general">📺 General</option>
+                            <option value="review">⭐ Review</option>
+                            <option value="unboxing">📦 Unboxing</option>
+                            <option value="outfit">👕 Outfit</option>
+                            <option value="live">🔴 En Vivo</option>
+                            <option value="promo">🎯 Promoción</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Video Destacado?</label>
+                        <select id="videoFeatured">
+                            <option value="0">No</option>
+                            <option value="1">⭐ Sí, mostrar primero</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Descripción (opcional)</label>
+                    <textarea id="videoDesc" placeholder="Breve descripción del video..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="addVideo()">➕ Agregar Video</button>
+            </div>
+            
+            <div class="card">
+                <h2>📺 Mis Videos (<span id="videoCount">0</span>)</h2>
+                <div id="videoList"></div>
+            </div>
+            
+            <div class="card">
+                <h2>🔴 Transmisión en Vivo</h2>
+                <p style="color:var(--text-muted);margin-bottom:20px;font-size:14px">
+                    Configura un live de YouTube para que aparezca destacado en tu tienda.
+                </p>
+                <div class="form-group">
+                    <label>URL del Live</label>
+                    <input type="text" id="liveUrl" placeholder="https://www.youtube.com/watch?v=XXXXX">
+                </div>
+                <div class="form-group">
+                    <label>Título del Live</label>
+                    <input type="text" id="liveTitle" placeholder="🔴 EN VIVO: Nueva colección">
+                </div>
+                <button class="btn btn-primary" onclick="saveLive()">💾 Guardar Live</button>
+                <button class="btn btn-danger" onclick="clearLive()" style="margin-left:8px">🗑️ Quitar Live</button>
+            </div>
+        </div>
+        
+        <!-- ============================================
+             REVIEWS
+             ============================================ -->
+        <div class="section" id="sec-reviews">
+            <div class="card">
+                <h2>⭐ Agregar Review</h2>
+                <p style="color:var(--text-muted);margin-bottom:20px;font-size:14px">
+                    Agrega testimonios de clientes reales para generar confianza.
+                </p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre del Cliente *</label>
+                        <input type="text" id="revName" placeholder="María G.">
+                    </div>
+                    <div class="form-group">
+                        <label>Calificación *</label>
+                        <select id="revRating">
+                            <option value="5">⭐⭐⭐⭐⭐ (5 estrellas)</option>
+                            <option value="4">⭐⭐⭐⭐ (4 estrellas)</option>
+                            <option value="3">⭐⭐⭐ (3 estrellas)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Comentario *</label>
+                    <textarea id="revText" placeholder="¡Excelente calidad! La gorra llegó perfecta..."></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Producto comprado</label>
+                        <select id="revProduct">
+                            <option value="">Seleccionar producto...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>¿Compra verificada?</label>
+                        <select id="revVerified">
+                            <option value="true">✅ Sí</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="addReview()">➕ Agregar Review</button>
+            </div>
+            
+            <div class="card">
+                <h2>📝 Reviews Publicados (<span id="reviewCount">0</span>)</h2>
+                <div id="reviewsList"></div>
+            </div>
+            
+            <div class="card">
+                <h2>📧 Leads Capturados</h2>
+                <p style="color:var(--text-muted);margin-bottom:20px;font-size:14px">
+                    Personas que dejaron su WhatsApp para recibir descuento.
+                </p>
+                <div id="leadsList"></div>
+                <button class="btn btn-secondary" onclick="exportLeads()" style="margin-top:16px">📥 Exportar Leads</button>
+            </div>
+        </div>
+        
+        <!-- ============================================
+             CONTACTO
+             ============================================ -->
+        <div class="section" id="sec-contacto">
+            <div class="card">
+                <h2>📞 Datos de Contacto</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>WhatsApp (para pedidos) *</label>
+                        <input type="text" id="cfgWa" placeholder="584121234567">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="cfgEmail" placeholder="hola@capskingdom.com">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" id="cfgPhone" placeholder="+58 412-123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label>Instagram (usuario)</label>
+                        <input type="text" id="cfgIg" placeholder="capskingdom">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>TikTok (usuario)</label>
+                    <input type="text" id="cfgTiktok" placeholder="@capskingdom">
+                </div>
+                <button class="btn btn-primary" onclick="saveContact()">💾 Guardar</button>
+            </div>
+            
+            <div class="card">
+                <h2>🔐 Seguridad</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nueva Contraseña</label>
+                        <input type="password" id="newPass" placeholder="Mínimo 4 caracteres">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar Contraseña</label>
+                        <input type="password" id="confirmPass" placeholder="Repetir contraseña">
+                    </div>
+                </div>
+                <button class="btn btn-secondary" onclick="changePass()">🔐 Cambiar Contraseña</button>
+            </div>
+            
+            <div class="card">
+                <h2>💾 Copia de Seguridad</h2>
+                <p style="color:var(--text-muted);margin-bottom:20px;font-size:14px">
+                    Descarga todos tus datos o restaura desde un backup anterior.
+                </p>
+                <button class="btn btn-primary" onclick="backupAll()">📥 Descargar Backup</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('restoreFile').click()" style="margin-left:8px">📤 Restaurar</button>
+                <input type="file" id="restoreFile" accept=".json" style="display:none" onchange="restoreBackup(event)">
+            </div>
+        </div>
+        
+        <!-- ============================================
+             STATS
+             ============================================ -->
+        <div class="section" id="sec-stats">
+            <div class="card">
+                <h2>📊 Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card highlight">
+                        <h3>Visitas</h3>
+                        <div class="stat-value" id="totalVisits">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Productos</h3>
+                        <div class="stat-value" id="totalProducts">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Videos</h3>
+                        <div class="stat-value" id="totalVideos">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Reviews</h3>
+                        <div class="stat-value" id="totalReviews">0</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2>🏆 Top 5 Más Vistas</h2>
+                <div id="topProducts"></div>
+            </div>
+            
+            <div class="card">
+                <button class="btn btn-secondary" onclick="loadStats()">🔄 Actualizar</button>
+                <button class="btn btn-danger" onclick="resetStats()" style="margin-left:8px">🗑️ Reiniciar Stats</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================
+// DATA
+// ============================================
+let password = '';
+
+function initPassword() {
+    const stored = localStorage.getItem('gorrasAdminPass');
+    if(stored) {
+        try { password = atob(stored); } catch(e) { password = 'admin123'; localStorage.setItem('gorrasAdminPass', btoa(password)); }
+    } else {
+        password = 'admin123';
+        localStorage.setItem('gorrasAdminPass', btoa(password));
+    }
+}
+initPassword();
+
+let config = JSON.parse(localStorage.getItem('gorrasConfig')) || {
+    name: 'CAPS KINGDOM',
+    slogan: 'Streetwear Venezolano',
+    heroTitle: 'CAPS KINGDOM',
+    heroDesc: 'Gorras originales premium para elevar tu estilo urbano. MLB, NBA, NFL y marcas exclusivas. Envíos a todo el país.',
+    heroBadge: '🇻🇪 Streetwear Venezolano',
+    announcement: '🔥 Envíos a toda Venezuela • Pago Móvil, Zelle, Binance',
+    wa: '584121234567',
+    email: 'hola@capskingdom.com',
+    phone: '+58 412-123-4567',
+    ig: 'capskingdom',
+    tiktok: '@capskingdom'
+};
+
+let categories = JSON.parse(localStorage.getItem('gorrasCategories')) || [
+    {name:'Snapback', icon:'🧢'},
+    {name:'Fitted', icon:'⚾'},
+    {name:'Dad Hat', icon:'🎩'},
+    {name:'Trucker', icon:'🚛'},
+    {name:'Beanie', icon:'🎿'},
+    {name:'Bucket', icon:'🪣'}
+];
+
+let products = JSON.parse(localStorage.getItem('gorrasProducts')) || [];
+let videos = JSON.parse(localStorage.getItem('gorrasVideos')) || [];
+let liveConfig = JSON.parse(localStorage.getItem('gorrasLive')) || { url: '', title: '' };
+let reviews = JSON.parse(localStorage.getItem('gorrasReviews')) || [];
+
+// ============================================
+// LOGIN
+// ============================================
+function login() {
+    if(document.getElementById('loginPass').value === password) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('adminPanel').classList.add('active');
+        sessionStorage.setItem('logged', '1');
+        loadData();
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+        document.getElementById('loginPass').value = '';
+    }
+}
+
+function logout() {
+    sessionStorage.removeItem('logged');
+    location.reload();
+}
+
+function showRecovery() {
+    alert('🔐 RECUPERAR CONTRASEÑA\n\nLa contraseña inicial es: admin123\n\nSi la cambiaste:\n1. Presiona F12\n2. Ve a Console\n3. Escribe: localStorage.removeItem("gorrasAdminPass");location.reload();\n\n⚠️ Esto NO borra tus productos.');
+}
+
+if(sessionStorage.getItem('logged') === '1') {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').classList.add('active');
+    document.addEventListener('DOMContentLoaded', loadData);
+}
+
+// ============================================
+// TABS
+// ============================================
+function showTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('active');
+    document.getElementById('sec-' + tab).classList.add('active');
+}
+
+// ============================================
+// LOAD DATA
+// ============================================
+function loadData() {
+    // Tienda
+    document.getElementById('storeName').value = config.name || '';
+    document.getElementById('storeSlogan').value = config.slogan || '';
+    document.getElementById('heroTitle').value = config.heroTitle || '';
+    document.getElementById('heroDesc').value = config.heroDesc || '';
+    document.getElementById('heroBadge').value = config.heroBadge || '';
+    document.getElementById('announcement').value = config.announcement || '';
+    
+    // Contacto
+    document.getElementById('cfgWa').value = config.wa || '';
+    document.getElementById('cfgEmail').value = config.email || '';
+    document.getElementById('cfgPhone').value = config.phone || '';
+    document.getElementById('cfgIg').value = config.ig || '';
+    document.getElementById('cfgTiktok').value = config.tiktok || '';
+    
+    // Live
+    document.getElementById('liveUrl').value = liveConfig.url || '';
+    document.getElementById('liveTitle').value = liveConfig.title || '';
+    
+    renderCategories();
+    renderProducts();
+    renderVideos();
+    renderReviews();
+    renderLeads();
+    loadStats();
+}
+
+// ============================================
+// SAVE FUNCTIONS
+// ============================================
+function saveStore() {
+    config.name = document.getElementById('storeName').value;
+    config.slogan = document.getElementById('storeSlogan').value;
+    save();
+    toast('✅ Guardado');
+}
+
+function saveHero() {
+    config.heroTitle = document.getElementById('heroTitle').value;
+    config.heroDesc = document.getElementById('heroDesc').value;
+    config.heroBadge = document.getElementById('heroBadge').value;
+    save();
+    toast('✅ Portada actualizada');
+}
+
+function saveAnnouncement() {
+    config.announcement = document.getElementById('announcement').value;
+    save();
+    toast('✅ Anuncio guardado');
+}
+
+function saveContact() {
+    config.wa = document.getElementById('cfgWa').value;
+    config.email = document.getElementById('cfgEmail').value;
+    config.phone = document.getElementById('cfgPhone').value;
+    config.ig = document.getElementById('cfgIg').value;
+    config.tiktok = document.getElementById('cfgTiktok').value;
+    save();
+    toast('✅ Contacto guardado');
+}
+
+function save() {
+    localStorage.setItem('gorrasConfig', JSON.stringify(config));
+}
+
+function changePass() {
+    const np = document.getElementById('newPass').value;
+    const cp = document.getElementById('confirmPass').value;
+    if(np.length < 4) { toast('❌ Mínimo 4 caracteres'); return; }
+    if(np !== cp) { toast('❌ No coinciden'); return; }
+    localStorage.setItem('gorrasAdminPass', btoa(np));
+    password = np;
+    document.getElementById('newPass').value = '';
+    document.getElementById('confirmPass').value = '';
+    toast('✅ Contraseña cambiada');
+}
+
+// ============================================
+// BACKUP
+// ============================================
+function backupAll() {
+    const data = {
+        config: JSON.parse(localStorage.getItem('gorrasConfig')),
+        products: JSON.parse(localStorage.getItem('gorrasProducts')),
+        categories: JSON.parse(localStorage.getItem('gorrasCategories')),
+        videos: JSON.parse(localStorage.getItem('gorrasVideos')),
+        reviews: JSON.parse(localStorage.getItem('gorrasReviews')),
+        live: JSON.parse(localStorage.getItem('gorrasLive')),
+        timestamp: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `backup-capskingdom-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+    toast('✅ Backup descargado');
+}
+
+function restoreBackup(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const data = JSON.parse(e.target.result);
+            if(confirm('¿Restaurar backup? Esto reemplazará todos los datos actuales.')) {
+                if(data.config) localStorage.setItem('gorrasConfig', JSON.stringify(data.config));
+                if(data.products) localStorage.setItem('gorrasProducts', JSON.stringify(data.products));
+                if(data.categories) localStorage.setItem('gorrasCategories', JSON.stringify(data.categories));
+                if(data.videos) localStorage.setItem('gorrasVideos', JSON.stringify(data.videos));
+                if(data.reviews) localStorage.setItem('gorrasReviews', JSON.stringify(data.reviews));
+                if(data.live) localStorage.setItem('gorrasLive', JSON.stringify(data.live));
+                location.reload();
+            }
+        } catch(err) {
+            toast('❌ Archivo inválido');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// ============================================
+// CATEGORIES
+// ============================================
+function renderCategories() {
+    document.getElementById('catList').innerHTML = categories.map((c, i) => `
+        <div class="list-item">
+            <span style="font-size:24px">${c.icon}</span>
+            <div class="list-item-text">
+                <strong>${c.name}</strong>
+                <small>${products.filter(p => p.category === c.name).length} productos</small>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="delCat(${i})">🗑️</button>
+        </div>
+    `).join('') || '<p style="color:var(--text-muted)">No hay categorías</p>';
+    
+    document.getElementById('pCat').innerHTML = categories.map(c => 
+        `<option value="${c.name}">${c.icon} ${c.name}</option>`
+    ).join('');
+}
+
+function addCategory() {
+    const name = document.getElementById('catName').value.trim();
+    const icon = document.getElementById('catIcon').value || '🧢';
+    if(!name) { toast('❌ Escribe un nombre'); return; }
+    if(categories.find(c => c.name.toLowerCase() === name.toLowerCase())) { toast('❌ Ya existe'); return; }
+    categories.push({name, icon});
+    localStorage.setItem('gorrasCategories', JSON.stringify(categories));
+    document.getElementById('catName').value = '';
+    document.getElementById('catIcon').value = '';
+    renderCategories();
+    toast('✅ Categoría agregada');
+}
+
+function delCat(i) {
+    if(!confirm('¿Eliminar categoría?')) return;
+    categories.splice(i, 1);
+    localStorage.setItem('gorrasCategories', JSON.stringify(categories));
+    renderCategories();
+    toast('🗑️ Eliminada');
+}
+
+// ============================================
+// PRODUCTS
+// ============================================
+function renderProducts() {
+    document.getElementById('prodCount').textContent = products.length;
+    document.getElementById('prodTable').innerHTML = products.map(p => `
+        <tr>
+            <td><img src="${p.image}" alt="" onerror="this.src='https://via.placeholder.com/50'"></td>
+            <td><strong>${p.name}</strong>${p.images && p.images.length > 1 ? ` <small style="color:var(--text-muted)">(${p.images.length} fotos)</small>` : ''}</td>
+            <td>${p.category}</td>
+            <td>$${p.price}</td>
+            <td class="actions">
+                <button onclick="editProd(${p.id})" title="Editar">✏️</button>
+                <button onclick="delProd(${p.id})" title="Eliminar">🗑️</button>
+            </td>
+        </tr>
+    `).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">No hay productos</td></tr>';
+    
+    // Update review product select
+    const revProduct = document.getElementById('revProduct');
+    if(revProduct) {
+        revProduct.innerHTML = '<option value="">Seleccionar producto...</option>' + 
+            products.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+    }
+}
+
+function addProduct() {
+    const name = document.getElementById('pName').value.trim();
+    const category = document.getElementById('pCat').value;
+    const price = parseFloat(document.getElementById('pPrice').value) || 0;
+    const oldPrice = parseFloat(document.getElementById('pOldPrice').value) || null;
+    const badge = document.getElementById('pBadge').value || null;
+    const image = document.getElementById('pImage').value || 'https://via.placeholder.com/400';
+    const desc = document.getElementById('pDesc').value;
+    
+    // Múltiples imágenes
+    const imagesStr = document.getElementById('pImages').value;
+    let images = [image];
+    if(imagesStr) {
+        const additionalImages = imagesStr.split(',').map(url => url.trim()).filter(url => url);
+        images = [image, ...additionalImages];
+    }
+    
+    if(!name || !price) { toast('❌ Nombre y precio obligatorios'); return; }
+    
+    const id = Math.max(...products.map(p => p.id), 0) + 1;
+    products.push({id, name, category, price, oldPrice, image, images, badge, desc});
+    localStorage.setItem('gorrasProducts', JSON.stringify(products));
+    
+    ['pName','pPrice','pOldPrice','pBadge','pImage','pImages','pDesc'].forEach(id => document.getElementById(id).value = '');
+    renderProducts();
+    renderCategories();
+    toast('✅ Producto agregado');
+}
+
+function editProd(id) {
+    const p = products.find(x => x.id === id);
+    document.getElementById('pName').value = p.name;
+    document.getElementById('pCat').value = p.category;
+    document.getElementById('pPrice').value = p.price;
+    document.getElementById('pOldPrice').value = p.oldPrice || '';
+    document.getElementById('pBadge').value = p.badge || '';
+    document.getElementById('pImage').value = p.image;
+    document.getElementById('pDesc').value = p.desc || '';
+    const additionalImages = (p.images || []).slice(1);
+    document.getElementById('pImages').value = additionalImages.join(', ');
+    delProd(id, true);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    showTab('productos');
+    toast('✏️ Editando...');
+}
+
+function delProd(id, silent) {
+    if(!silent && !confirm('¿Eliminar producto?')) return;
+    products = products.filter(p => p.id !== id);
+    localStorage.setItem('gorrasProducts', JSON.stringify(products));
+    renderProducts();
+    if(!silent) toast('🗑️ Eliminado');
+}
+
+// ============================================
+// VIDEOS
+// ============================================
+function getYoutubeId(url) {
+    if(!url) return null;
+    const patterns = [
+        /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/,
+        /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/
+    ];
+    for(const p of patterns) {
+        const m = url.match(p);
+        if(m) return m[1];
+    }
+    return null;
+}
+
+function renderVideos() {
+    document.getElementById('videoCount').textContent = videos.length;
+    
+    const catLabels = {
+        'general': '📺 General',
+        'review': '⭐ Review',
+        'unboxing': '📦 Unboxing',
+        'outfit': '👕 Outfit',
+        'live': '🔴 En Vivo',
+        'promo': '🎯 Promoción'
+    };
+    
+    const sorted = [...videos].sort((a,b) => (b.featured||0) - (a.featured||0));
+    
+    document.getElementById('videoList').innerHTML = sorted.length ? sorted.map((v, i) => {
+        const vid = getYoutubeId(v.url);
+        const thumb = vid ? `https://img.youtube.com/vi/${vid}/mqdefault.jpg` : 'https://via.placeholder.com/180x100';
+        return `
+        <div class="video-item">
+            <div class="video-thumb">
+                <img src="${thumb}" onerror="this.src='https://via.placeholder.com/180x100'">
+                <div class="play-icon">▶</div>
+            </div>
+            <div class="video-info">
+                <h4>${v.title}</h4>
+                <span class="video-cat ${v.category==='live'?'live':''} ${v.featured?'featured':''}">${v.featured?'⭐ ':''}${catLabels[v.category]||v.category}</span>
+                ${v.desc ? `<p>${v.desc}</p>` : ''}
+            </div>
+            <div class="video-actions">
+                <button class="btn btn-sm btn-secondary" onclick="window.open('${v.url}','_blank')">▶</button>
+                <button class="btn btn-sm btn-secondary" onclick="toggleFeaturedVideo(${i})">${v.featured?'★':'☆'}</button>
+                <button class="btn btn-sm btn-danger" onclick="delVideo(${i})">🗑️</button>
+            </div>
+        </div>`;
+    }).join('') : '<p style="color:var(--text-muted);text-align:center;padding:32px">No hay videos. Agrega tu primer video de YouTube.</p>';
+}
+
+function addVideo() {
+    const title = document.getElementById('videoTitle').value.trim();
+    const url = document.getElementById('videoUrl').value.trim();
+    const category = document.getElementById('videoCat').value;
+    const featured = document.getElementById('videoFeatured').value === '1';
+    const desc = document.getElementById('videoDesc').value.trim();
+    
+    if(!title || !url) { toast('❌ Título y URL obligatorios'); return; }
+    
+    const videoId = getYoutubeId(url);
+    if(!videoId) { toast('❌ URL de YouTube no válida'); return; }
+    
+    videos.push({
+        id: Date.now(),
+        title,
+        url,
+        videoId,
+        category,
+        featured,
+        desc,
+        createdAt: new Date().toISOString()
+    });
+    
+    localStorage.setItem('gorrasVideos', JSON.stringify(videos));
+    ['videoTitle','videoUrl','videoDesc'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('videoCat').value = 'general';
+    document.getElementById('videoFeatured').value = '0';
+    renderVideos();
+    toast('✅ Video agregado');
+}
+
+function delVideo(i) {
+    if(!confirm('¿Eliminar video?')) return;
+    videos.splice(i, 1);
+    localStorage.setItem('gorrasVideos', JSON.stringify(videos));
+    renderVideos();
+    toast('🗑️ Eliminado');
+}
+
+function toggleFeaturedVideo(i) {
+    videos[i].featured = !videos[i].featured;
+    localStorage.setItem('gorrasVideos', JSON.stringify(videos));
+    renderVideos();
+    toast(videos[i].featured ? '⭐ Destacado' : '☆ Ya no destacado');
+}
+
+function saveLive() {
+    const url = document.getElementById('liveUrl').value.trim();
+    const title = document.getElementById('liveTitle').value.trim();
+    if(url && !getYoutubeId(url)) { toast('❌ URL no válida'); return; }
+    liveConfig = { url, title };
+    localStorage.setItem('gorrasLive', JSON.stringify(liveConfig));
+    toast('✅ Live guardado');
+}
+
+function clearLive() {
+    if(!confirm('¿Quitar live?')) return;
+    liveConfig = { url: '', title: '' };
+    localStorage.setItem('gorrasLive', JSON.stringify(liveConfig));
+    document.getElementById('liveUrl').value = '';
+    document.getElementById('liveTitle').value = '';
+    toast('🗑️ Live removido');
+}
+
+// ============================================
+// REVIEWS
+// ============================================
+function renderReviews() {
+    document.getElementById('reviewCount').textContent = reviews.length;
+    
+    document.getElementById('reviewsList').innerHTML = reviews.length ? reviews.map((r, i) => `
+        <div class="list-item" style="flex-wrap:wrap">
+            <div style="width:40px;height:40px;background:var(--text-primary);color:var(--bg-primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px">${r.avatar || r.name.charAt(0)}</div>
+            <div class="list-item-text" style="flex:1;min-width:200px">
+                <strong>${r.name} ${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</strong>
+                <small style="display:block;margin:4px 0;color:var(--text-secondary)">"${r.text}"</small>
+                <small>${r.product || ''} ${r.verified ? '✓ Verificado' : ''}</small>
+            </div>
+            <button class="btn btn-sm btn-danger" onclick="delReview(${i})">🗑️</button>
+        </div>
+    `).join('') : '<p style="color:var(--text-muted)">No hay reviews</p>';
+}
+
+function addReview() {
+    const name = document.getElementById('revName').value.trim();
+    const rating = parseInt(document.getElementById('revRating').value);
+    const text = document.getElementById('revText').value.trim();
+    const product = document.getElementById('revProduct').value;
+    const verified = document.getElementById('revVerified').value === 'true';
+    
+    if(!name || !text) { toast('❌ Nombre y comentario obligatorios'); return; }
+    
+    reviews.push({
+        id: Date.now(),
+        name,
+        avatar: name.charAt(0).toUpperCase(),
+        rating,
+        text,
+        product,
+        verified,
+        date: new Date().toISOString()
+    });
+    
+    localStorage.setItem('gorrasReviews', JSON.stringify(reviews));
+    document.getElementById('revName').value = '';
+    document.getElementById('revText').value = '';
+    renderReviews();
+    toast('✅ Review agregado');
+}
+
+function delReview(i) {
+    if(!confirm('¿Eliminar review?')) return;
+    reviews.splice(i, 1);
+    localStorage.setItem('gorrasReviews', JSON.stringify(reviews));
+    renderReviews();
+    toast('🗑️ Eliminado');
+}
+
+// ============================================
+// LEADS
+// ============================================
+function renderLeads() {
+    const leads = JSON.parse(localStorage.getItem('gorrasLeads')) || [];
+    
+    document.getElementById('leadsList').innerHTML = leads.length ? leads.map((l, i) => `
+        <div class="list-item">
+            <span style="font-size:20px">📱</span>
+            <div class="list-item-text">
+                <strong>${l.phone}</strong>
+                <small>${new Date(l.date).toLocaleString('es-VE')}</small>
+            </div>
+            <a href="https://wa.me/${l.phone.replace(/[^0-9]/g,'')}" target="_blank" class="btn btn-sm btn-success">💬</a>
+        </div>
+    `).reverse().join('') : '<p style="color:var(--text-muted)">No hay leads aún.</p>';
+}
+
+function exportLeads() {
+    const leads = JSON.parse(localStorage.getItem('gorrasLeads')) || [];
+    if(!leads.length) { toast('❌ No hay leads'); return; }
+    
+    const csv = 'Telefono,Fecha\n' + leads.map(l => `${l.phone},${l.date}`).join('\n');
+    const blob = new Blob([csv], {type: 'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `leads-capskingdom-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    toast('✅ Leads exportados');
+}
+
+// ============================================
+// STATS
+// ============================================
+function loadStats() {
+    const s = JSON.parse(localStorage.getItem('gorrasStats')) || {visits: 0, productViews: {}};
+    
+    document.getElementById('totalVisits').textContent = s.visits || 0;
+    document.getElementById('totalProducts').textContent = products.length;
+    document.getElementById('totalVideos').textContent = videos.length;
+    document.getElementById('totalReviews').textContent = reviews.length;
+    
+    const top = Object.entries(s.productViews || {})
+        .sort((a,b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([id, v]) => ({p: products.find(p => p.id == id), v}))
+        .filter(x => x.p);
+    
+    document.getElementById('topProducts').innerHTML = top.length ? top.map((x, i) => `
+        <div class="list-item">
+            <span style="font-family:var(--font-display);font-size:24px;color:var(--text-muted);min-width:40px">#${i+1}</span>
+            <img src="${x.p.image}" style="width:50px;height:50px;object-fit:cover" onerror="this.src='https://via.placeholder.com/50'">
+            <div class="list-item-text">
+                <strong>${x.p.name}</strong>
+                <small>${x.v} vistas</small>
+            </div>
+        </div>
+    `).join('') : '<p style="color:var(--text-muted)">Sin datos</p>';
+}
+
+function resetStats() {
+    if(!confirm('¿Borrar todas las estadísticas?')) return;
+    localStorage.setItem('gorrasStats', JSON.stringify({visits: 0, productViews: {}}));
+    loadStats();
+    toast('🗑️ Stats reiniciadas');
+}
+
+// ============================================
+// TOAST
+// ============================================
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
